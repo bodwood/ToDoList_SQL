@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using ToDoList.Models;
 
 namespace ToDoList
 {
@@ -12,6 +13,8 @@ namespace ToDoList
       builder.Services.AddControllersWithViews();
 
       WebApplication app = builder.Build();
+
+      DBConfiguration.ConnectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
     //   app.UseDeveloperExceptionPage();
       app.UseHttpsRedirection();

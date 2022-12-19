@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration; //using ConfigurationBuilder loads appsettings.json
 using ToDoList.Models;
 using System;
 
@@ -8,77 +9,87 @@ namespace ToDoList.Tests
   [TestClass]
   public class ItemTests : IDisposable
   {
+    public IConfiguration Configuration { get; set; }//property to save appsettings.json configurations
 
     public void Dispose()
     {
       Item.ClearAll();
     }
 
-    [TestMethod]
-    public void ItemConstructor_CreatesInstanceOfItem_Item()
+     public ItemTests()
     {
-      Item newItem = new Item("test");
-      Assert.AreEqual(typeof(Item), newItem.GetType());
-    }
+      IConfigurationBuilder builder = new ConfigurationBuilder() //configuration object that invludes all data in appsettings.json
+          .AddJsonFile("appsettings.json");
+      Configuration = builder.Build();  
+      DBConfiguration.ConnectionString = Configuration["ConnectionStrings:TestConnection"]; //sets DBConfigurations.ConnectionString to "test connection" 
+    }                                                                                       //overrides DBConfiguration.ConnectionSTring that was set in DatabaseConfig.cs
+                                                                                            //ensures our tests are connected to our test database, instead of development database
 
-    [TestMethod]
-    public void GetDescription_ReturnsDescription_String()
-    {
-      //Arrange
-      string description = "Walk the dog.";
+    // [TestMethod]
+    // public void ItemConstructor_CreatesInstanceOfItem_Item()
+    // {
+    //   Item newItem = new Item("test");
+    //   Assert.AreEqual(typeof(Item), newItem.GetType());
+    // }
 
-      //Act
-      Item newItem = new Item(description);
-      string result = newItem.Description;
+    // [TestMethod]
+    // public void GetDescription_ReturnsDescription_String()
+    // {
+    //   //Arrange
+    //   string description = "Walk the dog.";
 
-      //Assert
-      Assert.AreEqual(description, result);
-    }
+    //   //Act
+    //   Item newItem = new Item(description);
+    //   string result = newItem.Description;
 
-    [TestMethod]
-    public void SetDescription_SetDescription_String()
-    {
-      //Arrange
-      string description = "Walk the dog.";
-      Item newItem = new Item(description);
+    //   //Assert
+    //   Assert.AreEqual(description, result);
+    // }
 
-      //Act
-      string updatedDescription = "Do the dishes";
-      newItem.Description = updatedDescription;
-      string result = newItem.Description;
+    // [TestMethod]
+    // public void SetDescription_SetDescription_String()
+    // {
+    //   //Arrange
+    //   string description = "Walk the dog.";
+    //   Item newItem = new Item(description);
 
-      //Assert
-      Assert.AreEqual(updatedDescription, result);
-    }
+    //   //Act
+    //   string updatedDescription = "Do the dishes";
+    //   newItem.Description = updatedDescription;
+    //   string result = newItem.Description;
 
-    [TestMethod]
-    public void GetAll_ReturnsEmptyList_ItemList()
-    {
-      // Arrange
-      List<Item> newList = new List<Item> { };
+    //   //Assert
+    //   Assert.AreEqual(updatedDescription, result);
+    // }
 
-      // Act
-      List<Item> result = Item.GetAll();
+    // [TestMethod]
+    // public void GetAll_ReturnsEmptyList_ItemList()
+    // {
+    //   // Arrange
+    //   List<Item> newList = new List<Item> { };
 
-      // Assert
-      CollectionAssert.AreEqual(newList, result);
-    }
+    //   // Act
+    //   List<Item> result = Item.GetAll();
 
-    [TestMethod]
-    public void GetAll_ReturnsItems_ItemList()
-    {
-      //Arrange
-      string description01 = "Walk the dog";
-      string description02 = "Wash the dishes";
-      Item newItem1 = new Item(description01);
-      Item newItem2 = new Item(description02);
-      List<Item> newList = new List<Item> { newItem1, newItem2 };
+    //   // Assert
+    //   CollectionAssert.AreEqual(newList, result);
+    // }
 
-      //Act
-      List<Item> result = Item.GetAll();
+    // [TestMethod]
+    // public void GetAll_ReturnsItems_ItemList()
+    // {
+    //   //Arrange
+    //   string description01 = "Walk the dog";
+    //   string description02 = "Wash the dishes";
+    //   Item newItem1 = new Item(description01);
+    //   Item newItem2 = new Item(description02);
+    //   List<Item> newList = new List<Item> { newItem1, newItem2 };
 
-      //Assert
-      CollectionAssert.AreEqual(newList, result);
-    }
+    //   //Act
+    //   List<Item> result = Item.GetAll();
+
+    //   //Assert
+    //   CollectionAssert.AreEqual(newList, result);
+    // }
   }
 }
